@@ -85,7 +85,7 @@ public class SnapGenericController {
     @PostMapping("/{resource}")
     public ResponseEntity<?> create(@PathVariable String resource, @RequestBody Map<String, Object> body) {
         SnapResourceMeta meta = SnapRegistry.getMetaFor(resource);
-        if (meta == null || !meta.isEndpointEnabled(Endpoint.POST)) {
+        if (meta == null || !meta.isEndpointEnabled(Endpoint.CREATE)) {
             return ResponseEntity.notFound().build();
         }
 
@@ -108,7 +108,7 @@ public class SnapGenericController {
             @RequestBody Map<String, Object> body) {
 
         SnapResourceMeta meta = SnapRegistry.getMetaFor(resource);
-        if (meta == null || !meta.isEndpointEnabled(Endpoint.PUT)) {
+        if (meta == null || !meta.isEndpointEnabled(Endpoint.EDIT)) {
             return ResponseEntity.notFound().build();
         }
 
