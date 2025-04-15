@@ -3,6 +3,7 @@ package com.tivit.snap_api.rest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tivit.snap_api.core.SnapRegistry;
 import com.tivit.snap_api.core.SnapResourceMeta;
+import com.tivit.snap_api.dto.PageResponse;
 import com.tivit.snap_api.enums.Endpoint;
 import com.tivit.snap_api.spec.SnapSpecBuilder;
 import org.slf4j.Logger;
@@ -13,6 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.web.config.EnableSpringDataWebSupport;
+import org.springframework.data.web.config.EnableSpringDataWebSupport.PageSerializationMode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +25,7 @@ import java.util.*;
 @RestController
 @SuppressWarnings("unchecked")
 @RequestMapping("${snap.api.base-path:/api}")
+@EnableSpringDataWebSupport(pageSerializationMode = PageSerializationMode.VIA_DTO)
 public class SnapGenericController {
     private static final Logger log = LoggerFactory.getLogger(SnapGenericController.class);
 
@@ -50,10 +54,10 @@ public class SnapGenericController {
                 JpaSpecificationExecutor<Object> specRepo = (JpaSpecificationExecutor<Object>) repo;
                 Specification<Object> spec = SnapSpecBuilder.build(meta, queryParams);
                 Page<Object> page = specRepo.findAll(spec, pageable);
-                return ResponseEntity.ok(page);
+                return ResponseEntity.ok(PageResponse.from(page));
             } else {
                 Page<Object> page = repo.findAll(pageable);
-                return ResponseEntity.ok(page);
+                return ResponseEntity.ok(PageResponse.from(page));
             }
         } catch (Exception e) {
             log.error("Error executing findAll for resource {}: {}", resource, e.getMessage(), e);
